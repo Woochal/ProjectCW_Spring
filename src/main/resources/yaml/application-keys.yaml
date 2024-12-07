@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/projectCD
+    username: root
+    password: 4635143
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+
+email:
+  id: chickendict@gmail.com
+  pw: uavv rrsk zunj ppvj
+
+jwt:
+  tokenSecretKey: cfc6f8968e16e357e2a588674174bc2ca34b538e9f759d081d48721fd0aa1f626188fca140ca58a5b88d6e98b3302c52f49f7fa1dc06924c34ecd45b31ba675e
+  tokenPrefix: Bearer/u0020
+  accessKey: Authorization
+  accessTokenExpirationTime: 1800000
+  refreshKey: RefreshToken
+  refreshTokenExpirationTime: 1209600000

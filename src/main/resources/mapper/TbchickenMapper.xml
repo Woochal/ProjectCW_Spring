@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thc.projectcd_spring.mapper.TbchickenMapper">
+
+	<select id="getFilteredChicken" parameterType="hashMap" resultType="com.thc.projectcd_spring.dto.TbchickenDto$ChickenResDto">
+		SELECT tbchicken.chickenname
+		,tbchicken.price
+		,tbchicken.brand
+		,tbchicken.type
+		,tbchicken.batter
+		,tbchicken.spiciness
+		,tbchicken.toping
+		,tbchicken.gramsB
+		,tbchicken.gramsA
+		,tbchicken.gramsE
+		,tbchicken.origin
+		,tbchicken.kcal
+		,tbchicken.protein
+		,tbchicken.sugar
+		,tbchicken.fat
+		,tbchicken.sodium
+		,tbchicken.score
+		,tbchicken.id as chicken_id
+		,tbchicken.image_url as imageUrl
+		FROM tbchicken
+		WHERE tbchicken.id is NOT NULL
+		<if test="chickenname != null and chickenname != ''">
+			AND tbchicken.chickenname = #{chickenname}
+		</if>
+		<if test="type != null and type != '전체'">
+			AND tbchicken.type = #{type}
+		</if>
+		<if test="brand != null and brand != '전체'">
+			AND tbchicken.brand = #{brand}
+		</if>
+		<if test="spiciness != null and spiciness != '전체'">
+			<choose>
+				<when test="spiciness == '1단계 이하'">AND tbchicken.spiciness &lt;= 1</when>
+				<when test="spiciness == '2단계 이하'">AND tbchicken.spiciness &lt;= 2</when>
+				<when test="spiciness == '3단계 이하'">AND tbchicken.spiciness &lt;= 3</when>
+				<when test="spiciness == '4단계 이하'">AND tbchicken.spiciness &lt;= 4</when>
+				<when test="spiciness == '5단계 이하'">AND tbchicken.spiciness &lt;= 5</when>
+			</choose>
+		</if>
+		<if test="price != null and price != '전체'">
+			<choose>
+				<when test="price == '15,000원 이하'">AND tbchicken.price &lt;= 15000</when>
+				<when test="price == '18,000원 이하'">AND tbchicken.price &lt;= 18000</when>
+				<when test="price == '20,000원 이하'">AND tbchicken.price &lt;= 20000</when>
+				<when test="price == '23,000원 이하'">AND tbchicken.price &lt;= 23000</when>
+				<when test="price == '25,000원 이하'">AND tbchicken.price &lt;= 25000</when>
+			</choose>
+		</if>
+		<choose>
+			<when test="sortType == '가격 높은 순'">ORDER BY tbchicken.price DESC</when>
+			<when test="sortType == '가격 낮은 순'">ORDER BY tbchicken.price ASC</when>
+			<when test="sortType == '평점 높은 순'">ORDER BY tbchicken.score DESC</when>
+			<when test="sortType == '평점 낮은 순'">ORDER BY tbchicken.score ASC</when>
+			<when test="sortType == '평가 많은 순'">ORDER BY tbchicken.commentCount DESC</when>
+			<when test="sortType == '평가 적은 순'">ORDER BY tbchicken.commentCount ASC</when>
+		</choose>
+	</select>
+
+	<select id="getChickenComments" parameterType="hashMap" resultType="com.thc.projectcd_spring.dto.TbchickenCommentDto$ChickenCommentResDto">
+		SELECT
+			c.content,
+			c.created_at AS createdAt,
+			c.score,
+			c.likes,
+			c.dis_likes AS disLikes,
+			u.nickname,
+			d.degree_name AS degree
+		FROM
+			tbchicken_comment c
+				INNER JOIN
+			tbuser u ON c.user_id = u.id
+				LEFT JOIN
+			tbuser_degree ud ON u.id = ud.tbuser_id
+				LEFT JOIN
+			degree d ON ud.degree_id = d.id
+		WHERE
+			c.chicken_id = #{chicken_id}
+		ORDER BY
+			c.likes DESC
+	</select>
+
+</mapper>
